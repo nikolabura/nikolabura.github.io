@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Countdown</title>
+        <style type="text/css">
+            body {
+                background-color: darkred;
+            }
+            #timer {
+                color: white;
+                font-family: monospace;
+                font-size: 666%;
+                text-align: center;
+                /* VVV I stole this from StackOverflow */
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translateX(-50%) translateY(-50%);
+                /* ^^^ Thanks Josh Crozier */
+            }
+        </style>
+        <audio id="oneminuteaudio">
+            <source src="oneminute.ogg" type="audio/ogg">
+        </audio>
+        <audio id="alarm1" loop>
+            <source src="alarm1.ogg" type="audio/ogg">
+        </audio>
+    </head>
+    <body id="body">
+        <div id="timer">
+            00:00:00.00
+        </div>
+        <script type="text/javascript">
+            var hours = getParameterByName("hours");
+            var minutes = getParameterByName("minutes");
+            var seconds = getParameterByName("seconds");
+            var title = "";
+            if(getParameterByName("title").length > 0) {
+                title = getParameterByName("title") + "<br>";
+            } else {
+                title = ""
+            }
+            if(getParameterByName("style") == 2) {
+                document.getElementById("body").style.backgroundColor
+                    = "black";
+            } else if(getParameterByName("style") == 3) {
+                document.getElementById("body").style.backgroundColor
+                    = "white";
+                document.getElementById("timer").style.color
+                    = "black";
+            }
+            var flash = getParameterByName("flash");
+            if(getParameterByName("bgaudio") != "none") {
+                document.getElementById(getParameterByName("bgaudio"))
+                    .play();
+            }
+            var intvid = window.setInterval( function() {
+                seconds -= 0.01;
+                document.getElementById("timer").innerHTML =
+                    title +
+                    zeroFill(hours) + ":" +
+                    zeroFill(minutes) + ":" +
+                    formatSecs(seconds);
+                if(seconds <= 0) {
+                    if(minutes <= 0) {
+                        if(hours <= 0) {
+                            document.getElementById("timer").style.color
+                                            = "#FFFFFF";
+                            return;
+                            clearInterval(intvid);
+                        } else {
+                            hours -= 1;
+                            minutes = 60;
+                            seconds = 60;
+                        }
+                    } else {
+                        minutes -= 1;
+                        seconds = 60;
+                    }
+                }
+                if((hours == 0) && (minutes == 0) && (seconds > 59)) {
+                    document.getElementById('oneminuteaudio').play();
+                }
+                if(flash == 2 &&
+                  ((hours == 0) && (minutes == 0) && (seconds < 10))) {
+                    if(Math.round(seconds*2) % 2) {
+                        document.getElementById("timer").style.color
+                                                = "#FFFFFF";
+                    } else {
+                        document.getElementById("timer").style.color
+                                                = "#AFAFAF";
+                    }
+                }
+                if(flash == 3) {
+                    if(Math.round(seconds*2) % 2) {
+                        document.getElementById("timer").style.color
+                                                = "#FFFFFF";
+                    } else {
+                        document.getElementById("timer").style.color
+                                                = "#AFAFAF";
+                    }
+                }
+            }, 10);
+            function zeroFill(num) {
+                if(num < 10) {
+                    return ("0" + num.toString());
+                } else {
+                    return num.toString();
+                }
+            }
+            function formatSecs(num) {
+                if(num < 0.005) {
+                    return "00.00";
+                } else if(num < 10) {
+                    return "0" + num.toFixed(2);
+                } else {
+                    return num.toFixed(2);
+                }
+            }
+            function getParameterByName(name, url) {
+                //stolen from StackOverflow (community wiki)
+                if (!url) url = window.location.href;
+                name = name.replace(/[\[\]]/g, "\\$&");
+                var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                    results = regex.exec(url);
+                if (!results) return null;
+                if (!results[2]) return '';
+                return decodeURIComponent(results[2].replace(/\+/g, " "));
+            }
+        </script>
+    </body>
+</html>
