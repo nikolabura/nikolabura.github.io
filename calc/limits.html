@@ -110,6 +110,45 @@
 	to `oo` when `x` <i>gets very, very close to zero</i>.
 		Limits are the mathematical
 		way of showing this.</p>
+	<hr>
+	<p>Let's take a look at one more function.</p>
+	`f(x) = 1/x`
+		<div class="plot" id="plot3"></div>
+		<script>
+			functionPlot({
+			target: '#plot3',
+			width: 500, height: 200,
+			disableZoom: false,
+			data: [{
+			  fn: '1/x',
+			  sampler: 'builtIn',
+			  graphType: 'polyline'
+			}]
+		  });
+		</script>
+	<p>Pass your cursor back and forth, horizontally, from x=-2 to x=0
+	to x=2 and back again. Watch how the function behaves.</p>
+	<p>There is a break in this function. It goes far down to `-oo`
+	, jumps all the way up to `+oo`, and then comes back near zero.</p>
+	So can we solve this limit?
+	`lim_(x->0)1/x`<br><br><br>
+	... actually, we cannot! The limit simply does not exist!
+	<p>The issue is that the function goes to two different values:
+	`-oo` and `+oo`, depending on which side you approach it from.
+	We need new notation to represent this.</p>
+	`lim_(x->0^+)1/x`
+	<p>See the little `+` next to the `x->0`? That indicates
+	that we are approaching the function from the positive or right
+	side. As we move in from the right, the function goes
+		up to `+oo`.</p>
+	`lim_(x->0^+)1/x = +oo`
+	<p>Similarly, for the negative/left approach...</p>
+	`lim_(x->0^-)1/x = -oo`
+	<p>When the function goes to different values depending on which
+	side it is approached from, then the "normal" limit does not exist,
+	and we must instead use limits with +/- signs on them.</p>
+	<hr>
+	<p>This page is a work in progress.</p>
 </body>
 </html>
 
