@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>AP BC Calculus Project</title>
+	<link rel="stylesheet" href="style.css"> 
+	<script src="math.js" type="text/javascript"></script>
+	<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script type="text/javascript" async
+		src="MathJax-master/MathJax.js?config=TeX-MML-AM_CHTML">
+	</script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  	<script src="https://wzrd.in/standalone/function-plot@1.14.0"></script>
+</head>
+<body>
+	<h2>LESSON ON: <i>LIMITS (GENERAL CONCEPT)</i></h2>
+	<h4>AP BC Final Project by Nikola Bura, Period 3</h4>
+	<h4><a href="index.html"> >> Return to Home << </a></h4>
+	<hr>
+	`lim_(x->?)f(x)`
+	<p>Limits are a very important concept throughout
+		all of calculus. Although the notation can be
+		confusing, they represent a pretty
+		natural idea.
+		</p>
+	<p><i>Limits indicate what happens to a function as it
+		goes to a certain value.</i></p><hr>
+	<p>Let's take a look at a simple example function.</p>
+	`f(x) = sin(x)`
+		<div class="plot" id="plot1"></div>
+		<script>
+			functionPlot({
+			target: '#plot1',
+			width: 500, height: 200,
+			disableZoom: true,
+			data: [{
+			  fn: 'sin(x)',
+			  sampler: 'builtIn',
+			  graphType: 'polyline'
+			}]
+		  });
+		</script>
+	<p>Move your cursor along the graph. Watch the coordinates change
+	as you move along the curve. <br>
+		Now, let's look at a limit...</p>
+	`lim_(x->0)sin(x)`
+	<p>What does this mean? Well, the big text to the right - in
+	this case `sin(x)` - is the function that we are referencing.
+	Underneath the `lim`, it says `x->0`.<br>
+		So we are looking for what
+	happens to the function `sin(x)` as x becomes zero.</p>
+	<p>This one is easy enough! Simply take the x-value, which is 0,
+		and plug it into the function.</p>
+	`sin(0)`<br>
+	`sin(0) = 0`
+	<p>And the answer to the limit is therefore `0`.</p>
+	<hr>
+	<p>When the function is <i>continuous</i>, meaning that
+	it is never interrupted, or that you can draw the whole
+	thing without lifting your pencil, limits are relatively easy.</p>
+	<p>You simply take the "target" x-value and plug it into
+	the function. But, unfortunately, it does become harder.</p>
+	<hr>
+	<p>Let's take a look at a non-continuous function.</p>
+	`f(x) = 1/x^2`
+		<div class="plot" id="plot2"></div>
+		<script>
+			functionPlot({
+			target: '#plot2',
+			width: 500, height: 200,
+			disableZoom: false,
+			data: [{
+			  fn: '1/(x^2)',
+			  sampler: 'builtIn',
+			  graphType: 'polyline'
+			}]
+		  });
+		</script>
+	<p>Now you can pan and zoom the plotting screen by dragging it
+	and scrolling your mouse wheel. Once again,
+	move your cursor along the graph and look at how it
+		behaves depending on your x-position.</p>
+		<p>Now, let's look at another limit...</p>
+	`lim_(x->0)1/x^2`
+	<p>Remember: This limit is essentially asking us, "what happens
+	to the value of `1/x^2` when `x` is approaching zero?"</p>
+	<p>For now, forget about plugging in values. Just look at the
+	graph above. Zoom out if necessary. Follow the curve with
+	your mouse cursor - start from the outside and move in,
+	horizontally, towards x = zero.</p>
+	<p>What happens to the graph when you move in towards x = zero?
+	It goes to extremely high numbers, correct?</p>
+	<p>In fact, as you get very close to zero, this function will
+	go all the way up to `oo`: infinity.</p>
+	<p>So... What happens
+	to the value of `1/x^2` when `x` is approaching zero?<br>
+	The answer: the value goes all the way up to infinity.</p>
+	`lim_(x->0)1/x^2 = oo`<br><br><br>
+	<hr>
+	<p>The last example demonstrated one reason why we have limits.
+	You cannot simply take `1/x^2` and plug in `x=0`, because that
+	would result in `1/0^2`, and you cannot divide by zero!</p>
+	<p>Limits help solve this issue, because they do not indicate
+	the function's exact value. Rather, they indicate what the
+	function <i>is approaching</i>.</p>
+	<p>In the last example, the function was nonexistent at the
+		exact point of `x=0`.
+	But by looking at the graph, it is obvious that it goes up
+	to `oo` when `x` <i>gets very, very close to zero</i>.
+		Limits are the mathematical
+		way of showing this.</p>
+</body>
+</html>
+
