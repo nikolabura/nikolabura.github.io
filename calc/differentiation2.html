@@ -1,0 +1,178 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>AP BC Calculus Project</title>
+	<link rel="stylesheet" href="style.css"> 
+	<script src="math.js" type="text/javascript"></script>
+	<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script type="text/javascript" async
+		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+	</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  	<script src="https://wzrd.in/standalone/function-plot@1.14.0"></script>
+</head>
+<body>
+	<h2>LESSON ON: <i>DIFFERENTIATION (DERIVATIVES)</i></h2>
+	<h4>AP BC Final Project by Nikola Bura, Period 3</h4>
+	<h4><a href="index.html"> &gt;&gt; Return to Home &lt;&lt; </a></h4>
+	<hr>
+	`f(x) -> f'(x)`
+	<p>Earlier, you learned how to find the instantaneous slope of
+	a function at any point. A <i>derivative</i> is a function
+	which, given an x-position, will tell you the slope of the
+	original function at that x-position.</p>
+	<p>If `f(x)` is the original function, then `f'(x)`
+	(read as "f prime x") is its derivative. So if `f` has a slope
+	of `4` at `x=2`, then `f'(2) = 4`.</p>
+	<div class="plot" id="linked-a"></div><br>
+	<div class="plot" id="linked-b"></div>
+	<script>
+		a = functionPlot({
+		  title: "Original Function f(x)",
+		  target: '#linked-a',
+		  width: 500, height: 200,
+		  data: [{ fn: 'x^3', 
+				 derivative: {
+					  fn: '3*x^2',
+					  updateOnMouseMove: true
+				  }}]
+		});
+		b = functionPlot({
+		  title: "Derivative f'(x)",
+		  target: '#linked-b',
+		  width: 500, height: 200,
+		  data: [{ fn: '3*x^2', color:'red'}]
+		});
+		a.addLink(b); b.addLink(a);
+	</script>
+	<p>Move your mouse along either one of the graphs above.
+	Note how the slope of the tangent line (in the upper graph)
+	always matches the value of the derivative
+		(in the lower graph)...</p>
+	<hr>
+	<p>There are a variety of methods,
+		techniques, and tricks for finding derivatives.</p>
+	<p>Let's start with <b>a constant function</b>.</p>
+	`f(x) = 4`
+	<div class="plot" id="plot1"></div>
+		<script>
+			functionPlot({
+			target: '#plot1',
+			width: 500, height: 200,
+			yDomain: [-6,6],
+			disableZoom: true,
+			data: [{
+			  fn: '4',
+			  sampler: 'builtIn',
+			  graphType: 'polyline'
+			}]
+		  });
+		</script>
+	<p>Since the value of this function always remains
+	<i>constant</i>, its slope is always zero. Therefore
+	its derivative is always zero.
+		Well, that was easy.</p>
+	`f'(x) = 0`
+	<div class="plot" id="plot2"></div>
+		<script>
+			functionPlot({
+			target: '#plot2',
+			width: 500, height: 200,
+			yDomain: [-6,6],
+			disableZoom: true,
+			data: [{
+			  fn: '0',
+				color:'red',
+			  sampler: 'builtIn',
+			  graphType: 'polyline'
+			}]
+		  });
+		</script>
+	<hr>
+	<p>Next we'll consider <b>a linear function</b>.</p>
+	`f(x) = 4x`
+	<div class="plot" id="plot3"></div>
+		<script>
+			functionPlot({
+			target: '#plot3',
+			width: 500, height: 200,
+			yDomain: [-6,6],
+			disableZoom: true,
+			data: [{
+			  fn: '4*x',
+			  sampler: 'builtIn',
+			  graphType: 'polyline'
+			}]
+		  });
+		</script>
+	<p>The slope of a linear function is always the same.
+	It is simply the coefficient of `x` - in this case, `4`.</p>
+	`f'(x) = 4`
+	<div class="plot" id="plot4"></div>
+		<script>
+			functionPlot({
+			target: '#plot4',
+			width: 500, height: 200,
+			yDomain: [-6,6],
+			disableZoom: true,
+			data: [{
+			  fn: '4',
+				color:'red',
+			  sampler: 'builtIn',
+			  graphType: 'polyline'
+			}]
+		  });
+		</script>
+	<hr>
+	<p>Now, something more interesting:
+		<b>a quadratic function</b>.</p>
+	`f(x) = 4x^2`
+	<div class="plot" id="plot5"></div>
+		<script>
+			functionPlot({
+			target: '#plot5',
+			width: 500, height: 200,
+			yDomain: [-6,6],
+			disableZoom: true,
+			data: [{
+			  fn: '4*x^2',
+			  sampler: 'builtIn',
+			  graphType: 'polyline'
+			}]
+		  });
+		</script>
+	<p>Now we must use a special rule known as the
+	<b>power rule</b>. This is used when deriving any polynomials,
+		not just quadratics.</p>
+	<p>If the function is `ax^p` where `a` and `p` are constants,
+	then...</p>
+	<p>Its derivative is `(a*p)x^(p-1)`.</p>
+	<p>You take the exponent of `x` and "bring it down" so it
+	multiplies the coefficient of `x`. Then the exponent of `x`
+	is decremented by one. Let's derive our example.</p>
+	`f(x) = 4x^2`<br>
+	`f'(x) = (4*2)x^(2-1)`<br>
+	`f'(x) = 8x^1`<br><br><br>
+	`f'(x) = 8x`
+	<div class="plot" id="plot6"></div>
+		<script>
+			functionPlot({
+			target: '#plot6',
+			width: 500, height: 200,
+			yDomain: [-6,6],
+			disableZoom: true,
+			data: [{
+			  fn: '8x',
+				color:'red',
+			  sampler: 'builtIn',
+			  graphType: 'polyline'
+			}]
+		  });
+		</script>
+	<hr>
+	<p style="color: red;">This page will be completed in the future.</p>
+</body>
+</html>
+

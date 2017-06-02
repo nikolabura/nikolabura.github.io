@@ -6,7 +6,11 @@ html {
 	line-height: 50%;
 }
 
-p, ul {
+h2 {
+	line-height: 100%;
+}
+
+p, ul, ol {
 	line-height: 120%;
 }
 
@@ -27,7 +31,6 @@ a:hover {
 
 hr {
 	margin: 0;
-	height: 2px;
 	border-style: solid;
 	border-color: cornflowerblue;
 	border-width: 2px;
