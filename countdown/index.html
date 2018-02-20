@@ -35,6 +35,12 @@
                 text-align: left;
                 line-height: 120%;
             }
+			#abstimeset {
+				width: 30%;
+                margin: auto;
+                text-align: center;
+                line-height: 120%;
+			}
         </style>
     </head>
     <body id="body">
@@ -45,12 +51,18 @@
         <br><br><br>
         <form action="countdown.html">
             H <input type="number" name="hours" placeholder="Hours"
-                     min="0" required> H<br>
+                     min="0"> H<br>
             M <input type="number" name="minutes" placeholder="Minutes"
-                     min="0" required> M<br>
+                     min="0"> M<br>
             S <input type="number" name="seconds" placeholder="Seconds"
-                     min="0" required> S<br>
-            <br>
+                     min="0"> S<br><br>
+			<fieldset id="abstimeset">
+				<legend>Alternative</legend>
+				Go to Time: <input name="absolutetime" type="time"><br>
+				<input id="usetime" name="usetime" type="checkbox">
+				<label for="usetime"> Use time value instead of Hrs/Min/Sec selector?</label><br>
+            </fieldset>
+			<br>
             <button id="additionalbutton" type="button" onclick="addbut()">
                 View Additional Settings</button><br><br>
             <fieldset id="additional" style="display:none;">

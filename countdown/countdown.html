@@ -35,6 +35,21 @@
             var minutes = getParameterByName("minutes");
             var seconds = getParameterByName("seconds");
             var title = "";
+			var useAbsTime = getParameterByName("usetime") == "on";
+			var targetDate = new Date();
+			if(useAbsTime) {
+				var absTimeArg = getParameterByName("absolutetime").split(":");
+				targetDate.setHours(absTimeArg[0], absTimeArg[1], 0);
+				if(targetDate < new Date()) {
+					targetDate.setDate(targetDate.getDate() + 1);
+				}
+				var secondsToTarget = (targetDate - new Date())/1000;
+				var minutesToTarget = Math.floor(secondsToTarget/60);
+				seconds = secondsToTarget % 60;
+				minutes = minutesToTarget;
+				hours = Math.floor(minutesToTarget/60);
+				minutes = minutesToTarget % 60;
+			}
             if(getParameterByName("title").length > 0) {
                 title = getParameterByName("title") + "<br>";
             } else {
@@ -100,6 +115,15 @@
                                                 = "#AFAFAF";
                     }
                 }
+				if(seconds == 30 && minutes > 1) {
+					var secondsToTarget = (targetDate - new Date())/1000;
+					var minutesToTarget = Math.floor(secondsToTarget/60);
+					seconds = secondsToTarget % 60;
+					minutes = minutesToTarget;
+					hours = Math.floor(minutesToTarget/60);
+					minutes = minutesToTarget % 60;
+					alert("reset");
+				}
             }, 10);
             function zeroFill(num) {
                 if(num < 10) {
