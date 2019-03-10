@@ -48,7 +48,7 @@
 			var strBuilder = "Most recently finished match: <strong>" + maximumMatch + "</strong><br>";
 			nextTeamMatch = teamsMatchesArr[0];
 			for (match in teamsMatchesArr) {
-				if (teamsMatchesArr[match] >= maximumMatch) {
+				if (teamsMatchesArr[match] > maximumMatch) {
 					nextTeamMatch = teamsMatchesArr[match];
 					break;
 				}
@@ -149,9 +149,6 @@
 	<div id="container" onclick="refreshCentralText();">
 		<div id="centralText">
 			Matchmonitor
-		</div>
-		<div id="queueText">
-			! Queue Now !
 		</div>
 	</div>
 	<div id="bottomcont">
