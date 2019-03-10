@@ -1,0 +1,28 @@
+<html>
+<head>
+	<title>FRC Match-Monitor</title>
+	<meta charset="utf-8" />
+	<style>
+		body {
+			font-family: sans-serif;
+		}
+	</style>
+	<script type="text/javascript">
+		function fetchData() {
+			xhr = new XMLHttpRequest();
+			url = "https://www.thebluealliance.com/api/v3/event/2019pawch/matches/simple";
+			AUTH_KEY = "NXcblwjyxDUAIwniQK0UguHQdIqWuy16XpcJ7GtUeXo7KOanXcQvbOcGxQu6qntW";
+			xhr.open("POST", url);
+			xhr.setRequestHeader("X-TBA-Auth-Key", AUTH_KEY);
+			xhr.addEventListener("load", onGotData);
+			xhr.send();
+		}
+		function onGotData() {
+			console.log(this.responseText);
+		}
+	</script>
+</head>
+<body>
+	<button onclick="fetchData()">Fetch data</button>
+</body>
+</html>
