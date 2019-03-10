@@ -8,21 +8,154 @@
 		}
 	</style>
 	<script type="text/javascript">
-		function fetchData() {
+		const AUTH_KEY = "NXcblwjyxDUAIwniQK0UguHQdIqWuy16XpcJ7GtUeXo7KOanXcQvbOcGxQu6qntW";
+		const eventKey = "2019pawch";
+		const teamKey = "frc4638";
+		const teamName = "4638 Jagbots";
+		var teamsMatchesArr = [];
+		var nextTeamMatch = 0;
+		var maximumMatch = 0;
+		
+		function fetchDoneMatches() {
 			xhr = new XMLHttpRequest();
-			url = "https://www.thebluealliance.com/api/v3/event/2019pawch/matches/simple";
-			AUTH_KEY = "NXcblwjyxDUAIwniQK0UguHQdIqWuy16XpcJ7GtUeXo7KOanXcQvbOcGxQu6qntW";
-			xhr.open("POST", url);
+			url = "https://www.thebluealliance.com/api/v3/event/" + eventKey + "/matches/simple";
+			xhr.open("GET", url);
 			xhr.setRequestHeader("X-TBA-Auth-Key", AUTH_KEY);
-			xhr.addEventListener("load", onGotData);
+			xhr.addEventListener("load", onGotDoneMatches);
 			xhr.send();
 		}
-		function onGotData() {
-			console.log(this.responseText);
+		
+		function fetchTeamsMatches() {
+			xhr = new XMLHttpRequest();
+			url = "https://www.thebluealliance.com/api/v3/team/" + teamKey + "/event/" + eventKey + "/matches/simple";
+			xhr.open("GET", url);
+			xhr.setRequestHeader("X-TBA-Auth-Key", AUTH_KEY);
+			xhr.addEventListener("load", onGotTeamsMatches);
+			xhr.send();
 		}
+		
+		function onGotDoneMatches() {
+			console.log("Got finished matches from BLUE ALLIANCE. Parsing...");
+			var matchesJson = JSON.parse(this.responseText);
+			maximumMatch = 0;
+			for (match in matchesJson) {
+				var matchNum = matchesJson[match]["match_number"];
+				if (matchNum > maximumMatch && matchesJson[match]["actual_time"] != null) {
+					maximumMatch = matchNum;
+				}
+			}
+			console.log("Found maximum match: " + maximumMatch);
+			var strBuilder = "Most recently finished match: <strong>" + maximumMatch + "</strong><br>";
+			nextTeamMatch = teamsMatchesArr[0];
+			for (match in teamsMatchesArr) {
+				if (teamsMatchesArr[match] >= maximumMatch) {
+					nextTeamMatch = teamsMatchesArr[match];
+					break;
+				}
+			}
+			strBuilder += "Next " + teamName + " match: <strong>" + nextTeamMatch + "</strong>";
+			document.getElementById("topcont").innerHTML = strBuilder;
+		}
+		
+		function onGotTeamsMatches() {
+			console.log("Got team's matches from BLUE ALLIANCE. Parsing...");
+			var matchesJson = JSON.parse(this.responseText);
+			teamsMatchesArr = [];
+			for (match in matchesJson) {
+				var matchNum = matchesJson[match]["match_number"];
+				teamsMatchesArr.push(matchNum);
+			}
+			teamsMatchesArr.sort(function(a, b){return a-b}); // sort numbers
+			var strBuilder = teamName + " matches:<br>";
+			for (match in teamsMatchesArr) {
+				var matchNum = teamsMatchesArr[match];
+				if (matchNum <= maximumMatch) strBuilder += "<strong>";
+				strBuilder += " " + matchNum;
+				if (matchNum <= maximumMatch) strBuilder += "</strong>";
+			}
+			console.log("Our team's matches: " + teamsMatchesArr);
+			document.getElementById("bottomcont").innerHTML = strBuilder;
+		}
+		
+		function refreshCentralText() {
+			fetchTeamsMatches();
+			fetchDoneMatches();
+			var matchesRemaining = nextTeamMatch - maximumMatch;
+			var strBuilder = matchesRemaining + " matches remaining";
+			document.getElementById("centralText").innerHTML = strBuilder;
+		}
+		
+		document.addEventListener("DOMContentLoaded", function(event) {
+			var secondsInterval = 20;
+			window.setInterval(refreshCentralText, secondsInterval * 1000);
+		});
 	</script>
+	<style>
+		#container {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			-moz-transform: translateX(-50%) translateY(-50%);
+			-webkit-transform: translateX(-50%) translateY(-50%);
+			transform: translateX(-50%) translateY(-50%);
+			font-family: monospace;
+			font-size: 350%;
+			text-align: center;
+		}
+		#topcont {
+			position: absolute;
+			top: 10%;
+			left: 50%;
+			-moz-transform: translateX(-50%) translateY(-50%);
+			-webkit-transform: translateX(-50%) translateY(-50%);
+			transform: translateX(-50%) translateY(-50%);
+			font-family: monospace;
+			font-size: 150%;
+			text-align: center;
+		}
+		#bottomcont {
+			position: absolute;
+			top: 90%;
+			left: 50%;
+			-moz-transform: translateX(-50%) translateY(-50%);
+			-webkit-transform: translateX(-50%) translateY(-50%);
+			transform: translateX(-50%) translateY(-50%);
+			font-family: monospace;
+			font-size: 150%;
+			text-align: center;
+		}
+		body {
+			background-color: white;
+		}
+		aaaaa {
+			animation-name: redFlash;
+			animation-duration: 2.5s;
+			animation-iteration-count: infinite;
+		}
+		@keyframes redFlash {
+			0%	 { background-color: red; }
+			50%  { background-color: white; }
+			100% { background-color: red; }
+		}
+		#queueText {
+			font-size: 60%;
+		}
+	</style>
 </head>
 <body>
-	<button onclick="fetchData()">Fetch data</button>
+	<div id="topcont">
+		Info text here
+	</div>
+	<div id="container" onclick="refreshCentralText();">
+		<div id="centralText">
+			Matchmonitor
+		</div>
+		<div id="queueText">
+			! Queue Now !
+		</div>
+	</div>
+	<div id="bottomcont">
+		Match list here
+	</div>
 </body>
 </html>
