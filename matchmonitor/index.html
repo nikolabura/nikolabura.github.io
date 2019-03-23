@@ -20,26 +20,36 @@
 		var teamsMatchesArr = [];
 		var nextTeamMatch = 0;
 		var ongoingMatch = 0;
+		var successfulFetch = false;
 		
 		function fetchDoneMatches() {
 			xhr = new XMLHttpRequest();
-			url = "https://www.thebluealliance.com/api/v3/event/" + eventKey + "/matches/simple";
+			url = "https://www.thebluealliance.com/api/v3/event/" + eventKey + "/matches/simple?_=" + new Date().getTime();
 			xhr.open("GET", url);
 			xhr.setRequestHeader("X-TBA-Auth-Key", AUTH_KEY);
 			xhr.addEventListener("load", onGotDoneMatches);
+			xhr.addEventListener("error", function () {
+				console.log("Failed fetch!");
+				successfulFetch = false;
+			});
 			xhr.send();
 		}
 		
 		function fetchTeamsMatches() {
 			xhr = new XMLHttpRequest();
-			url = "https://www.thebluealliance.com/api/v3/team/" + teamKey + "/event/" + eventKey + "/matches/simple";
+			url = "https://www.thebluealliance.com/api/v3/team/" + teamKey + "/event/" + eventKey + "/matches/simple?_=" + new Date().getTime();
 			xhr.open("GET", url);
 			xhr.setRequestHeader("X-TBA-Auth-Key", AUTH_KEY);
 			xhr.addEventListener("load", onGotTeamsMatches);
+			xhr.addEventListener("error", function () {
+				console.log("Failed fetch!");
+				successfulFetch = false;
+			});
 			xhr.send();
 		}
 		
 		function onGotDoneMatches() {
+			successfulFetch = true;
 			console.log("Got finished matches from BLUE ALLIANCE. Parsing...");
 			var matchesJson = JSON.parse(this.responseText);
 			var maximumMatch = 0;
@@ -68,6 +78,7 @@
 		}
 		
 		function onGotTeamsMatches() {
+			successfulFetch = true;
 			console.log("Got team's matches from BLUE ALLIANCE. Parsing...");
 			var matchesJson = JSON.parse(this.responseText);
 			teamsMatchesArr = [];
@@ -128,10 +139,13 @@
 				document.body.className = "greyPulseClass";
 				document.getElementById("queueText").innerHTML = " ";
 			}
+			if (!successfulFetch) {
+				document.getElementById("centralText").innerHTML += "?<br><small><i>WARNING: INTERNET CONNECTION LOST</i></small>";
+			}
 		}
 		
 		document.addEventListener("DOMContentLoaded", function(event) {
-			var secondsInterval = 20;
+			var secondsInterval = 15;
 			window.setInterval(refreshCentralText, secondsInterval * 1000);
 			window.setInterval(refreshTime, 500);
 		});
