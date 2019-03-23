@@ -49,6 +49,18 @@
 			xhr.send();
 		}
 		
+		function fetchTeamRanking() {
+			xhr = new XMLHttpRequest();
+			url = "https://www.thebluealliance.com/api/v3/team/" + teamKey + "/event/" + eventKey + "/status?_=" + new Date().getTime();
+			xhr.open("GET", url);
+			xhr.setRequestHeader("X-TBA-Auth-Key", AUTH_KEY);
+			xhr.addEventListener("load", onGotTeamRanking);
+			xhr.addEventListener("error", function () {
+				console.log("Failed fetch for team ranking info!");
+			});
+			xhr.send();
+		}
+		
 		function onGotDoneMatches() {
 			successfulFetch = true;
 			console.log("Got finished matches from BLUE ALLIANCE. Parsing...");
@@ -119,6 +131,12 @@
 			document.getElementById("bottominfotext").innerHTML = strBuilder;
 		}
 		
+		function onGotTeamRanking() {
+			console.log("Got team's status/ranking from BLUE ALLIANCE. Parsing...");
+			var statusJson = JSON.parse(this.responseText);
+			document.getElementById("rankInfo").innerHTML = statusJson["overall_status_str"];
+		}
+		
 		function refreshCentralText(matchesLeft) {
 			document.getElementById("bottomsmalltext").innerHTML = "Qualifications " + eventName;
 			fetchTeamsMatches();
@@ -166,8 +184,10 @@
 		}
 		
 		document.addEventListener("DOMContentLoaded", function(event) {
-			var secondsInterval = 10;
-			window.setInterval(refreshCentralText, secondsInterval * 1000);
+			var secondsIntervalCentral = 10;
+			var secondsIntervalRanking = 60;
+			window.setInterval(refreshCentralText, secondsIntervalCentral * 1000);
+			window.setInterval(fetchTeamRanking, secondsIntervalRanking * 1000);
 			window.setInterval(refreshTime, 500);
 		});
 		
@@ -246,6 +266,21 @@
 			font-family: monospace;
 			font-size: 200%;
 			text-align: center;
+			color: #555555;
+			width: 20%;
+			padding-top: 12px; padding-bottom: 12px;
+		}
+		#rankInfo {
+			position: absolute;
+			top: 90%;
+			left: 15%;
+			-moz-transform: translateX(-50%) translateY(-50%);
+			-webkit-transform: translateX(-50%) translateY(-50%);
+			transform: translateX(-50%) translateY(-50%);
+			font-family: monospace;
+			font-size: 120%;
+			text-align: center;
+			color: #555555;
 			width: 20%;
 			padding-top: 12px; padding-bottom: 12px;
 		}
@@ -336,7 +371,7 @@
 			Bumper color: <span id="bumperColor">???</span>
 		</div>
 	</div>
-	<div id="container" onclick="refreshCentralText();">
+	<div id="container" onclick="refreshCentralText(); fetchTeamRanking();">
 		<div id="centralText">
 			Matchmonitor
 		</div>
@@ -352,9 +387,11 @@
 			Qualifications
 		</div>
 	</div>
-	
-		<div id="timeClock">
-			00:00:00 PM
-		</div>
+	<div id="timeClock">
+		00:00:00 PM
+	</div>
+	<div id="rankInfo">
+		Ranking info not yet loaded.
+	</div>
 </body>
 </html>
