@@ -64,16 +64,27 @@
 			console.log("Found maximum match: " + maximumMatch);
 			var strBuilder = "Currently ongoing match: <strong>" + ongoingMatch + "</strong><br>";
 			nextTeamMatch = teamsMatchNumbersArr[0];
+			var nextTeamMatchIndex = 0;
 			for (match in teamsMatchNumbersArr) {
 				if (teamsMatchNumbersArr[match] >= ongoingMatch) {
 					nextTeamMatch = teamsMatchNumbersArr[match];
+					nextTeamMatchIndex = match;
 					break;
 				}
 			}
 			if (nextTeamMatch < ongoingMatch) {
 				strBuilder += "Next " + teamName + " match: <strong>" + "NONE" + "</strong>";
+				document.getElementById("bumperColor").innerHTML = "N/A";
 			} else {
 				strBuilder += "Next " + teamName + " match: <strong>" + nextTeamMatch + "</strong>";
+				var matchContent = teamsMatchesArr[nextTeamMatchIndex];
+				if (matchContent["alliances"]["blue"]["team_keys"].includes(teamKey)) {
+					document.getElementById("bumperColor").innerHTML = "<span style=\"color: blue\">BLUE</span>";
+				} else if (matchContent["alliances"]["red"]["team_keys"].includes(teamKey)) {
+					document.getElementById("bumperColor").innerHTML = "<span style=\"color: red\">RED</span>";
+				} else {
+					document.getElementById("bumperColor").innerHTML = "???";
+				}
 			}
 			document.getElementById("topinfotext").innerHTML = strBuilder;
 		}
@@ -207,7 +218,7 @@
 			font-family: monospace;
 			font-size: 150%;
 			text-align: center;
-			background-color: white;
+			background-color: white;//rgb(255,220,220);
 			width: 100%;
 			padding-top: 12px; padding-bottom: 12px;
 		}
@@ -221,7 +232,7 @@
 			font-family: monospace;
 			font-size: 150%;
 			text-align: center;
-			background-color: white;
+			background-color: white;//rgb(255,220,220);
 			width: 100%;
 			padding-top: 12px; padding-bottom: 12px;
 		}
