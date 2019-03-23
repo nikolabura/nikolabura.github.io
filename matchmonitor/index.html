@@ -11,8 +11,8 @@
 	
 		// CONFIGURATION BELOW #########################################################################
 		const AUTH_KEY = "NXcblwjyxDUAIwniQK0UguHQdIqWuy16XpcJ7GtUeXo7KOanXcQvbOcGxQu6qntW";
-		const eventKey = "2019pawch";
-		const eventName = "2019 Westtown District";
+		const eventKey = "2019mdoxo";
+		const eventName = "2019 Oxon Hill District Event";
 		const teamKey = "frc4638";
 		const teamName = "4638 Jagbots";
 		// CONFIGURATION ABOVE #########################################################################
@@ -91,7 +91,7 @@
 			document.getElementById("bottomsmalltext").innerHTML = "Qualifications " + eventName;
 			fetchTeamsMatches();
 			fetchDoneMatches();
-			var matchesRemaining = matchesLeft;//nextTeamMatch - ongoingMatch;
+			var matchesRemaining = nextTeamMatch - ongoingMatch;
 			var strBuilder = matchesRemaining + ((matchesRemaining == 1) ? " match remaining" : " matches remaining");
 			if (matchesRemaining >= 0) {
 				document.getElementById("centralText").innerHTML = strBuilder;
@@ -132,8 +132,34 @@
 		
 		document.addEventListener("DOMContentLoaded", function(event) {
 			var secondsInterval = 20;
-			//window.setInterval(refreshCentralText, secondsInterval * 1000);
+			window.setInterval(refreshCentralText, secondsInterval * 1000);
+			window.setInterval(refreshTime, 500);
 		});
+		
+		function refreshTime() {
+			var today = new Date();
+			var h = today.getHours();
+			var m = today.getMinutes();
+			var s = today.getSeconds();
+			var session = "AM";
+			
+			if (h == 0) { h = 12; }
+			if (h > 12) {
+				h = h - 12;
+				session = "PM";
+			}
+			
+			m = padTimeDigits(m);
+			s = padTimeDigits(s);
+			
+			document.getElementById("timeClock").innerHTML = h + ":" + m + ":" + s + " " + session + ((s % 30 < 2) ? "<br>BRUH" : "");
+		}
+		
+		function padTimeDigits(i) {
+			if (i < 10) { i = "0" + i; }
+			return i;
+		}
+		
 	</script>
 	<style>
 		#container {
@@ -175,6 +201,19 @@
 			width: 100%;
 			padding-top: 12px; padding-bottom: 12px;
 		}
+		#timeClock {
+			position: absolute;
+			top: 90%;
+			left: 85%;
+			-moz-transform: translateX(-50%) translateY(-50%);
+			-webkit-transform: translateX(-50%) translateY(-50%);
+			transform: translateX(-50%) translateY(-50%);
+			font-family: monospace;
+			font-size: 200%;
+			text-align: center;
+			width: 20%;
+			padding-top: 12px; padding-bottom: 12px;
+		}
 		body {
 			background-color: white;
 		}
@@ -190,7 +229,7 @@
 		}
 		.greenPulseClass {
 			animation-name: greenPulse;
-			animation-duration: 2.5s;
+			animation-duration: 5s;
 			animation-iteration-count: infinite;
 		}
 		.yellowPulseClass {
@@ -200,7 +239,7 @@
 		}
 		.greyPulseClass {
 			animation-name: greyPulse;
-			animation-duration: 5s;
+			animation-duration: 4.5s;
 			animation-iteration-count: infinite;
 		}
 		@keyframes redFlash {
@@ -247,6 +286,10 @@
 		#queueText {
 			font-size: 60%;
 		}
+		#clockText {
+			font-size: 60%;
+			padding-bottom: 6px;
+		}
 		#bumperColor {
 			color: blue;
 		}
@@ -257,9 +300,9 @@
 		<div id="topinfotext">
 			Info text here
 		</div>
-		<div id="bumperIndicator" class="smallerText">
+		<!--<div id="bumperIndicator" class="smallerText">
 			Bumper color: <span id="bumperColor">BLUE</span>
-		</div>
+		</div>-->
 	</div>
 	<div id="container" onclick="refreshCentralText();">
 		<div id="centralText">
@@ -277,5 +320,9 @@
 			Qualifications
 		</div>
 	</div>
+	
+		<div id="timeClock">
+			00:00:00 PM
+		</div>
 </body>
 </html>
