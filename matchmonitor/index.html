@@ -18,6 +18,7 @@
 		// CONFIGURATION ABOVE #########################################################################
 		
 		var teamsMatchesArr = [];
+		var teamsMatchNumbersArr = [];
 		var nextTeamMatch = 0;
 		var ongoingMatch = 0;
 		var successfulFetch = false;
@@ -62,7 +63,7 @@
 			ongoingMatch = maximumMatch + 1;
 			console.log("Found maximum match: " + maximumMatch);
 			var strBuilder = "Currently ongoing match: <strong>" + ongoingMatch + "</strong><br>";
-			nextTeamMatch = teamsMatchesArr[0];
+			nextTeamMatch = teamsMatchNumbersArr[0];
 			for (match in teamsMatchesArr) {
 				if (teamsMatchesArr[match] >= ongoingMatch) {
 					nextTeamMatch = teamsMatchesArr[match];
@@ -82,16 +83,25 @@
 			console.log("Got team's matches from BLUE ALLIANCE. Parsing...");
 			var matchesJson = JSON.parse(this.responseText);
 			teamsMatchesArr = [];
+			teamsMatchNumbersArr = [];
 			for (match in matchesJson) {
-				var matchNum = matchesJson[match]["match_number"];
-				teamsMatchesArr.push(matchNum);
+				var matchContent = matchesJson[match];
+				teamsMatchesArr.push(matchContent);
 			}
-			teamsMatchesArr.sort(function(a, b){return a-b}); // sort numbers
+			teamsMatchesArr.sort(function(a, b){return a["match_number"] - b["match_number"]}); // sort numbers
 			var strBuilder = teamName + " matches:<br>";
 			for (match in teamsMatchesArr) {
-				var matchNum = teamsMatchesArr[match];
+				var matchContent = teamsMatchesArr[match];
+				var matchNum = matchContent["match_number"];
+				teamsMatchNumbersArr.push(matchNum);
 				if (matchNum < ongoingMatch) strBuilder += "<strong>";
-				strBuilder += " " + matchNum;
+				if (matchContent["alliances"]["blue"]["team_keys"].includes(teamKey)) {
+					strBuilder += " <span style=\"color: blue\">" + matchNum + "</span>";
+				} else if (matchContent["alliances"]["red"]["team_keys"].includes(teamKey)) {
+					strBuilder += " <span style=\"color: red\">" + matchNum + "</span>";
+				} else {
+					strBuilder += " " + matchNum + "?";
+				}
 				if (matchNum < ongoingMatch) strBuilder += "</strong>";
 			}
 			console.log("Our team's matches: " + teamsMatchesArr);
@@ -140,12 +150,12 @@
 				document.getElementById("queueText").innerHTML = " ";
 			}
 			if (!successfulFetch) {
-				document.getElementById("centralText").innerHTML += "?<br><small><i>WARNING: INTERNET CONNECTION LOST</i></small>";
+				document.getElementById("centralText").innerHTML += "?<br><small><i style=\"color: darkred\">WARNING: INTERNET CONNECTION LOST</i></small>";
 			}
 		}
 		
 		document.addEventListener("DOMContentLoaded", function(event) {
-			var secondsInterval = 15;
+			var secondsInterval = 10;
 			window.setInterval(refreshCentralText, secondsInterval * 1000);
 			window.setInterval(refreshTime, 500);
 		});
@@ -304,9 +314,6 @@
 			font-size: 60%;
 			padding-bottom: 6px;
 		}
-		#bumperColor {
-			color: blue;
-		}
 	</style>
 </head>
 <body id="body" class="greenPulseClass">
@@ -314,9 +321,9 @@
 		<div id="topinfotext">
 			Info text here
 		</div>
-		<!--<div id="bumperIndicator" class="smallerText">
-			Bumper color: <span id="bumperColor">BLUE</span>
-		</div>-->
+		<div id="bumperIndicator" class="smallerText">
+			Bumper color: <span id="bumperColor">???</span>
+		</div>
 	</div>
 	<div id="container" onclick="refreshCentralText();">
 		<div id="centralText">
