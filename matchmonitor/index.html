@@ -64,9 +64,9 @@
 			console.log("Found maximum match: " + maximumMatch);
 			var strBuilder = "Currently ongoing match: <strong>" + ongoingMatch + "</strong><br>";
 			nextTeamMatch = teamsMatchNumbersArr[0];
-			for (match in teamsMatchesArr) {
-				if (teamsMatchesArr[match] >= ongoingMatch) {
-					nextTeamMatch = teamsMatchesArr[match];
+			for (match in teamsMatchNumbersArr) {
+				if (teamsMatchNumbersArr[match] >= ongoingMatch) {
+					nextTeamMatch = teamsMatchNumbersArr[match];
 					break;
 				}
 			}
@@ -104,7 +104,7 @@
 				}
 				if (matchNum < ongoingMatch) strBuilder += "</strong>";
 			}
-			console.log("Our team's matches: " + teamsMatchesArr);
+			console.log("Our team's matches: " + teamsMatchNumbersArr);
 			document.getElementById("bottominfotext").innerHTML = strBuilder;
 		}
 		
