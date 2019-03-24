@@ -117,15 +117,17 @@
 				var matchContent = teamsMatchesArr[match];
 				var matchNum = matchContent["match_number"];
 				teamsMatchNumbersArr.push(matchNum);
-				if (matchNum < ongoingMatch) strBuilder += "<strong>";
+				if (matchNum <= nextTeamMatch) strBuilder += "<strong>";
 				if (matchContent["alliances"]["blue"]["team_keys"].includes(teamKey)) {
-					strBuilder += " <span style=\"color: blue\">" + matchNum + "</span>";
+					var textColor = (matchNum < ongoingMatch) ? "lightblue" : "blue";
+					strBuilder += " <span style=\"color: " + textColor + "\">" + matchNum + "</span>";
 				} else if (matchContent["alliances"]["red"]["team_keys"].includes(teamKey)) {
-					strBuilder += " <span style=\"color: red\">" + matchNum + "</span>";
+					var textColor = (matchNum < ongoingMatch) ? "pink" : "red";
+					strBuilder += " <span style=\"color: " + textColor + "\">" + matchNum + "</span>";
 				} else {
 					strBuilder += " " + matchNum + "?";
 				}
-				if (matchNum < ongoingMatch) strBuilder += "</strong>";
+				if (matchNum <= nextTeamMatch) strBuilder += "</strong>";
 			}
 			console.log("Our team's matches: " + teamsMatchNumbersArr);
 			document.getElementById("bottominfotext").innerHTML = strBuilder;
@@ -196,8 +198,8 @@
 			var h = today.getHours();
 			var m = today.getMinutes();
 			var s = today.getSeconds();
-			var session = "AM";
 			
+			var session = "AM";
 			if (h == 0) { h = 12; }
 			if (h > 12) {
 				h = h - 12;
@@ -207,7 +209,14 @@
 			m = padTimeDigits(m);
 			s = padTimeDigits(s);
 			
-			document.getElementById("timeClock").innerHTML = h + ":" + m + ":" + s + " " + session + ((s % 30 < 2) ? "<br>BRUH" : "");
+			var interestingFlag = false;
+			if (h == 4 && m == 20 && s % 2 == 0) {
+				document.body.className = "fancyGreenPulseClass";
+				interestingFlag = true;
+			}
+			if (s % 30 < 2) interestingFlag = true;
+			
+			document.getElementById("timeClock").innerHTML = h + ":" + m + ":" + s + " " + session + ((interestingFlag) ? "<br>BRUH" : "");
 		}
 		
 		function padTimeDigits(i) {
@@ -310,6 +319,11 @@
 		.greyPulseClass {
 			animation-name: greyPulse;
 			animation-duration: 4.5s;
+			animation-iteration-count: infinite;
+		}
+		.fancyGreenPulseClass {
+			animation-name: greenPulse;
+			animation-duration: 0.6s;
 			animation-iteration-count: infinite;
 		}
 		@keyframes redFlash {
