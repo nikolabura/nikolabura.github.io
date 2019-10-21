@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="utf-8"/>
         <title>Countdown</title>
         <style type="text/css">
             body {
@@ -11,12 +12,14 @@
                 font-family: monospace;
                 font-size: 666%;
                 text-align: center;
-                /* VVV I stole this from StackOverflow */
+                
+                /* VVV stolen from StackOverflow */
                 position: absolute;
                 top: 50%;
                 left: 50%;
                 transform: translateX(-50%) translateY(-50%);
                 /* ^^^ Thanks Josh Crozier */
+                
             }
         </style>
         <audio id="oneminuteaudio">
@@ -27,16 +30,23 @@
         </audio>
     </head>
     <body id="body">
-        <div id="timer">
+        <div id="timer" onclick="timerClicked()">
             00:00:00.00
         </div>
         <script type="text/javascript">
+        
+            // GET URL PARAMETERS
             var hours = getParameterByName("hours");
+            if (hours == "") hours = 0;
             var minutes = getParameterByName("minutes");
+            if (minutes == "") minutes = 0;
             var seconds = getParameterByName("seconds");
-            var title = "";
+            if (seconds == "") seconds = 0;
+            var flash = getParameterByName("flash");
+            
+            // INITIALIZE TARGET DATE
+            var targetDate = new Date();
 			var useAbsTime = getParameterByName("usetime") == "on";
-			var targetDate = new Date();
 			if(useAbsTime) {
 				var absTimeArg = getParameterByName("absolutetime").split(":");
 				targetDate.setHours(absTimeArg[0], absTimeArg[1], 0);
@@ -49,12 +59,23 @@
 				minutes = minutesToTarget;
 				hours = Math.floor(minutesToTarget/60);
 				minutes = minutesToTarget % 60;
-			}
+			} else {
+                // set time relatively from current time
+                var secondsToAdd = 0;
+                secondsToAdd += (hours * 60 * 60);
+                secondsToAdd += (minutes * 60);
+                secondsToAdd += (seconds * 1);
+                // note: above multiplication is necessary to convert seconds string to number
+                targetDate = new Date(Date.now() + (secondsToAdd * 1000));
+            }
+            
+            // SET COUNTDOWN TITLE
+            var title = "";
             if(getParameterByName("title").length > 0) {
                 title = getParameterByName("title") + "<br>";
-            } else {
-                title = ""
             }
+            
+            // SET TIMER AND BACKGROUND COLORS
             if(getParameterByName("style") == 2) {
                 document.getElementById("body").style.backgroundColor
                     = "black";
@@ -64,40 +85,41 @@
                 document.getElementById("timer").style.color
                     = "black";
             }
-            var flash = getParameterByName("flash");
-            if(getParameterByName("bgaudio") != "none") {
-                document.getElementById(getParameterByName("bgaudio"))
-                    .play();
-            }
-            var intvid = window.setInterval( function() {
-                seconds -= 0.01;
+            
+            // ANIMATION FRAME FUNCTION (Called every frame in the browser)
+            function animationFrame() {
+            
+                // determine remaining time
+                var secondsToTarget = (targetDate - new Date())/1000;
+                var minutesToTarget = Math.floor(secondsToTarget/60);
+                seconds = secondsToTarget % 60;
+                hours = Math.floor(minutesToTarget/60);
+                minutes = minutesToTarget % 60;
+                
+                // are we finished?
+                var finished = false;
+                if (secondsToTarget <= 0) {
+                    finished = true;
+                    hours = 0;
+                    minutes = 0;
+                    seconds = 0;
+                }
+                
+                // set indicator text
                 document.getElementById("timer").innerHTML =
                     title +
                     zeroFill(hours) + ":" +
                     zeroFill(minutes) + ":" +
                     formatSecs(seconds);
-                if(seconds <= 0) {
-                    if(minutes <= 0) {
-                        if(hours <= 0) {
-                            document.getElementById("timer").style.color
-                                            = "#FFFFFF";
-                            return;
-                            clearInterval(intvid);
-                        } else {
-                            hours -= 1;
-                            minutes = 60;
-                            seconds = 60;
-                        }
-                    } else {
-                        minutes -= 1;
-                        seconds = 60;
-                    }
-                }
+                
+                // play audio cues
                 if((hours == 0) && (minutes == 0) && (seconds > 59)) {
                     document.getElementById('oneminuteaudio').play();
                 }
-                if(flash == 2 &&
-                  ((hours == 0) && (minutes == 0) && (seconds < 10))) {
+                
+                // flash the text, if necessary
+                var flash2active = (flash == 2) && ((hours == 0) && (minutes == 0) && (seconds < 10));
+                if(flash == 3 || flash2active) {
                     if(Math.round(seconds*2) % 2) {
                         document.getElementById("timer").style.color
                                                 = "#FFFFFF";
@@ -106,25 +128,17 @@
                                                 = "#AFAFAF";
                     }
                 }
-                if(flash == 3) {
-                    if(Math.round(seconds*2) % 2) {
-                        document.getElementById("timer").style.color
-                                                = "#FFFFFF";
-                    } else {
-                        document.getElementById("timer").style.color
-                                                = "#AFAFAF";
-                    }
+                
+                // call function to run on NEXT frame
+                if (!finished) {
+                    window.requestAnimationFrame(animationFrame);
                 }
-				if(seconds == 30 && minutes > 1) {
-					var secondsToTarget = (targetDate - new Date())/1000;
-					var minutesToTarget = Math.floor(secondsToTarget/60);
-					seconds = secondsToTarget % 60;
-					minutes = minutesToTarget;
-					hours = Math.floor(minutesToTarget/60);
-					minutes = minutesToTarget % 60;
-					alert("reset");
-				}
-            }, 10);
+                
+            }
+            window.requestAnimationFrame(animationFrame);
+            
+            // UTILITY FUNCTIONS BELOW
+            
             function zeroFill(num) {
                 if(num < 10) {
                     return ("0" + num.toString());
@@ -132,6 +146,7 @@
                     return num.toString();
                 }
             }
+            
             function formatSecs(num) {
                 if(num < 0.005) {
                     return "00.00";
@@ -141,6 +156,7 @@
                     return num.toFixed(2);
                 }
             }
+            
             function getParameterByName(name, url) {
                 //stolen from StackOverflow (community wiki)
                 if (!url) url = window.location.href;
@@ -151,6 +167,16 @@
                 if (!results[2]) return '';
                 return decodeURIComponent(results[2].replace(/\+/g, " "));
             }
+            
+            // EVENT HANDLER FUNCTION
+            function timerClicked() {    
+                // START USER'S CHOSEN BACKGROUND AUDIO
+                // note: this does not happen automatically due to HTML5 audio autoplay restrictions
+                if(getParameterByName("bgaudio") != "none") {
+                    document.getElementById(getParameterByName("bgaudio")).play();
+                }
+            }
+            
         </script>
     </body>
 </html>
