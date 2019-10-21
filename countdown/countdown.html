@@ -4,6 +4,7 @@
         <meta charset="utf-8"/>
         <title>Countdown</title>
         <style type="text/css">
+        
             body {
                 background-color: darkred;
             }
@@ -21,6 +22,18 @@
                 /* ^^^ Thanks Josh Crozier */
                 
             }
+            
+            .redFlashClass {
+                animation-name: redFlash;
+                animation-duration: 1s;
+                animation-iteration-count: infinite;
+                animation-timing-function: ease-out;
+            }
+            @keyframes redFlash {
+                0%	 { background-color: #CC0000; }
+                100%  { background-color: darkred; }
+            }
+            
         </style>
         <audio id="oneminuteaudio">
             <source src="oneminute.ogg" type="audio/ogg">
@@ -47,7 +60,7 @@
             // INITIALIZE TARGET DATE
             var targetDate = new Date();
 			var useAbsTime = getParameterByName("usetime") == "on";
-			if(useAbsTime) {
+			if (useAbsTime) {
 				var absTimeArg = getParameterByName("absolutetime").split(":");
 				targetDate.setHours(absTimeArg[0], absTimeArg[1], 0);
 				if(targetDate < new Date()) {
@@ -71,22 +84,29 @@
             
             // SET COUNTDOWN TITLE
             var title = "";
-            if(getParameterByName("title").length > 0) {
+            if (getParameterByName("title").length > 0) {
                 title = getParameterByName("title") + "<br>";
             }
             
             // SET TIMER AND BACKGROUND COLORS
-            if(getParameterByName("style") == 2) {
+            var styleParam = getParameterByName("style");
+            if (styleParam == 2) {
                 document.getElementById("body").style.backgroundColor
                     = "black";
-            } else if(getParameterByName("style") == 3) {
+            } else if (styleParam == 3) {
                 document.getElementById("body").style.backgroundColor
                     = "white";
                 document.getElementById("timer").style.color
                     = "black";
+            } else if (styleParam == 4) {
+                document.body.className = "redFlashClass";
+            } else if (styleParam == 5) {
+                // don't do anything, but remember to start animation later
             }
             
             // ANIMATION FRAME FUNCTION (Called every frame in the browser)
+            var prevSecsToTarget = Math.floor((targetDate - new Date())/1000);
+            var alreadySetAnimation = false;
             function animationFrame() {
             
                 // determine remaining time
@@ -103,7 +123,23 @@
                     hours = 0;
                     minutes = 0;
                     seconds = 0;
+                    document.body.style.animationDuration = "3s";
                 }
+                
+                // detect integer crossovers on the seconds variable
+                // (this function currently unused except to log to output)
+                var secsToTargetFloor = Math.floor(secondsToTarget);
+                if (secsToTargetFloor != prevSecsToTarget) {
+                    console.log(secsToTargetFloor);
+                    if (prevSecsToTarget <= 20 && !alreadySetAnimation && styleParam == 5) {
+                        document.body.className = "redFlashClass";
+                        alreadySetAnimation = true;
+                    }
+                    if (prevSecsToTarget == 10) document.body.style.animationDuration = "0.5s";
+                    if (prevSecsToTarget == 5)  document.body.style.animationDuration = "0.25s";
+                    if (prevSecsToTarget == 2)  document.body.style.animationDuration = "0.125s";
+                }
+                prevSecsToTarget = secsToTargetFloor;
                 
                 // set indicator text
                 document.getElementById("timer").innerHTML =
@@ -148,13 +184,14 @@
             }
             
             function formatSecs(num) {
-                if(num < 0.005) {
+                if (num < 0.005) {
                     return "00.00";
-                } else if(num < 10) {
-                    return "0" + num.toFixed(2);
-                } else {
-                    return num.toFixed(2);
                 }
+                var returnVal = num.toFixed(2);
+                if (returnVal.length == 4) {
+                    returnVal = "0" + returnVal;
+                }
+                return returnVal;
             }
             
             function getParameterByName(name, url) {
